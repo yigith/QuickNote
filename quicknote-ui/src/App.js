@@ -1,24 +1,18 @@
-import logo from './logo.svg';
+import AppContext from './AppContext';
+import { useState } from 'react';
+import NoteBook from './NoteBook'
+import Enterance from './Enterance'
 import './App.css';
 
 function App() {
+  const [noteBook, setNoteBook] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContext.Provider value={{noteBook, setNoteBook}}>
+      <div className="App">
+        {noteBook ? <NoteBook /> : <Enterance />}
+      </div>
+    </AppContext.Provider>
   );
 }
 
