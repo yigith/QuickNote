@@ -29,9 +29,17 @@ function NoteBook() {
     }, []);
 
     useEffect(() => {
-        if (selectedIndex < 0)
+        if (notes.length == 0) {
+            setId(0);
+            setTitle("");
+            setContent("");
+            setSelectedIndex(-1);
+        }
+        else if (selectedIndex < 0)
             showNote(0);
-    }, [notes]);
+        else
+            showNote(selectedIndex);
+    }, [notes, selectedIndex]);
 
     const handleClose = function (event) {
         event.preventDefault();
@@ -43,6 +51,31 @@ function NoteBook() {
         showNote(index);
     };
 
+    const handleNewNoteClick = function (event) {
+        axios.post(API_URL + "Notes", { title: "New Note", content: "", noteBookId: ctx.noteBook.id })
+            .then(function (response) {
+                setNotes([...notes, response.data]);
+            });
+    };
+
+    const handleSaveClick = function (event) {
+        axios.put(API_URL + "Notes/" + id, { id, title, content, noteBookId: ctx.noteBook.id })
+            .then(function (response) {
+                const newNotes = [...notes];
+                newNotes[selectedIndex] = response.data;
+                setNotes(newNotes);
+            });
+    };
+
+    const handleDeleteClick = function (event) {
+        axios.delete(API_URL + "Notes/" + id)
+            .then(function (response) {
+                const newNotes = [...notes];
+                newNotes.splice(selectedIndex, 1);
+                setNotes(newNotes);
+                setSelectedIndex(selectedIndex < newNotes.length ? selectedIndex : selectedIndex - 1);
+            });
+    };
 
     return (
         <div className="h-100 d-flex flex-column">
@@ -65,16 +98,22 @@ function NoteBook() {
             <Container fluid className="flex-sm-fill">
                 <Row className="h-100">
                     <Col sm={4} md={3} className="py-3">
-                        <h4 className="mb-3 mt-2">Notes of '{ctx.noteBook.name}'</h4>
-                        <ListGroup defaultActiveKey="#note-0">
+                        <div className="d-flex justify-content-between align-items-center mb-3 mt-2">
+                            <h5 className="m-0">Notes of '{ctx.noteBook.name}'</h5>
+                            <Button variant="outline-primary" size="sm" onClick={handleNewNoteClick}>
+                                <FontAwesomeIcon icon={["fas", "plus"]} />
+                            </Button>
+                        </div>
+                        <ListGroup defaultActiveKey={"#note-0"}>
                             {notes.map((x, i) => (
-                                <ListGroup.Item key={i} action href={"#note-" + i} onClick={e => handleListItemClick(e, i)}>
+                                <ListGroup.Item key={i} action href={"#note-" + i} onClick={e => handleListItemClick(e, i)}
+                                    active={i == selectedIndex}>
                                     {x.title}
                                 </ListGroup.Item>
                             ))}
                         </ListGroup>
                     </Col>
-                    <Col sm={8} md={9} className="d-flex flex-column py-3">
+                    <Col sm={8} md={9} className={selectedIndex < 0 ? "d-none" : "d-flex flex-column py-3"}>
                         <Form.Group className="mb-3">
                             <Form.Control type="text" placeholder="Title.." 
                                 value={title} onChange={e => setTitle(e.target.value)} />
@@ -84,11 +123,11 @@ function NoteBook() {
                                 value={content} onChange={e => setContent(e.target.value) } />
                         </Form.Group>
                         <div>
-                            <Button variant="primary">
+                            <Button variant="primary" onClick={handleSaveClick}>
                                 <FontAwesomeIcon icon={["fas", "save"]} className="me-2" />
                                 Save
                             </Button>
-                            <Button variant="danger" className="ms-2">
+                            <Button variant="danger" className="ms-2" onClick={handleDeleteClick}>
                                 <FontAwesomeIcon icon={["fas", "trash"]} className="me-2" />
                                 Delete
                             </Button>
