@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/QuickNote/static/css/main.397a78df.css",
+    "main.js": "/QuickNote/static/js/main.90e68adf.js",
+    "static/js/787.15f9c196.chunk.js": "/QuickNote/static/js/787.15f9c196.chunk.js",
+    "index.html": "/QuickNote/index.html",
+    "main.397a78df.css.map": "/QuickNote/static/css/main.397a78df.css.map",
+    "main.90e68adf.js.map": "/QuickNote/static/js/main.90e68adf.js.map",
+    "787.15f9c196.chunk.js.map": "/QuickNote/static/js/787.15f9c196.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.397a78df.css",
+    "static/js/main.90e68adf.js"
+  ]
+}
